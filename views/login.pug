@@ -1,0 +1,16 @@
+head
+  title login
+  link(rel='stylesheet' href='/static/style/style.css')
+h1 Login
+if error
+  p.error Error occured. Try again!
+
+form(action='/login' method='POST')
+  div
+    label(for='email') Email
+    input#email(type='email' name='email' required='')
+  div
+    label(for='password') Password
+    input#password(type='password' name='password' required='')
+  button(type='submit') Login
+a(href='/register') Register
