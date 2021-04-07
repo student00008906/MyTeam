@@ -1,14 +1,15 @@
-html
+doctype html
+html(lang='en')
   head
-    title MyTeam
-    link(href='/static/style.css' rel='stylesheet')
-  body
-    header.header
-      h1.logo
-        a(href='/') Notes
+    title TO DO App
+    link(rel='stylesheet', href='/static/style/main.css')
+    link(rel='preconnect' href='https://fonts.gstatic.com')
+    link(href='https://fonts.googleapis.com/css2?family=Open+Sans:wght@300&display=swap' rel='stylesheet')
+  body 
+    div.wrapper
+      a.linktointro(href='/intro') Main page
+      h1.logo TO DO APP 
 
-      nav.nav
-        a(href='/notes') notes
-        a(href='/archive') archive
-
-    block content
+      block number1
+  footer 
+    p.footer This web application was created to fulfill Web Technology module’s requirements and does not represent an actual company or service

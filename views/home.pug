@@ -1,15 +1,29 @@
-doctype html
-html(lang="en")
-    head
-        title MyTeam
-        link(href='/static/style/style.css' rel='stylesheet')
-    body 
-        h1.homeh1 Welcome to MyTeam 
-        nav.main-nav
-            ul
-                li
-                    a.signin(href='/login') Log in
-                li
-                    a.signup(href='/register') Register 
+extends layout.pug
+
+block number1 
+  if error
+    p.error Please fill the input
+
+  if success
+    p.success Good job 
+
+  if deleted
+    p.success Deleted
+
+  form.form(action='/add' method='POST')
+    input.input(type='text' placeholder='Add your todo description here...' name='todo')
+    button.btn Add  
+
+  div.todos
+    if todos.length
+      each todo in todos  
+        p.todo 
+          if todo.done
+            a.done(href=`/${ todo.id}/update`) #{ todo.description }
+          else 
+            a.undone(href=`/${ todo.id}/update`) #{ todo.description }
+          a.delete(href=`/${ todo.id }/delete`) Delete
+    else
+      p.todo No any todo available 
 
     

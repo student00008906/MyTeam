@@ -19,6 +19,8 @@ initializePassport(
 
 const users = []
 
+const fs = require('fs')
+
 app.set('view engine', 'pug')
 app.use(express.urlencoded({ extended: false }))
 app.use(flash())
@@ -34,21 +36,23 @@ app.use(methodOverride('_method'))
 
 app.use('/static', express.static('public'))
 
-app.get('/index', (req, res) => {
-	res.render('index')
+
+app.get('/intro', checkNotAuthenticated, (req, res) => {
+	res.render('intro')
 })
 
-app.get('/', checkNotAuthenticated, (req, res) => {
-	res.render('home')
+app.get('/layout', (req, res) => {
+	res.render('layout')
 })
-
 
 app.get('/login', checkNotAuthenticated, (req, res) => {
 	res.render('login')
 })
 
+
+
 app.post('/login', checkNotAuthenticated, passport.authenticate('local', {
-  successRedirect: '/index',
+  successRedirect: '/home',
   failureRedirect: '/login',
   failureFlash: true
 }))
@@ -93,8 +97,108 @@ function checkNotAuthenticated(req, res, next) {
   next()
 }
 
+/// http://localhost:8000
+app.get('/', (req, res) => {
+  fs.readFile('./data/todos.json', (err, data) => {
+    if (err) throw err
+
+    const todos = JSON.parse(data)
+
+    res.render('home', { todos: todos })
+  })
+})
+
+app.post('/add', (req, res) => {
+  const formData = req.body
+
+  if (formData.todo.trim() == '') {
+    fs.readFile('./data/todos.json', (err, data) => {
+      if (err) throw err
+
+      const todos = JSON.parse(data)
+
+      res.render('/home', { error: true, todos: todos })
+    })
+  } else {
+    fs.readFile('./data/todos.json', (err, data) => {
+      if (err) throw err
+
+      const todos = JSON.parse(data)
+
+      const todo = {
+        id: id(),
+        description: formData.todo,
+        done: false
+      }
+
+      todos.push(todo)
+
+      fs.writeFile('./data/todos.json', JSON.stringify(todos), (err) => {
+        if (err) throw err
+
+        fs.readFile('./data/todos.json', (err, data) => {
+          if (err) throw err
+
+          const todos = JSON.parse(data)
+
+          res.render('home', { success: true, todos: todos })
+        })
+      })
+    })
+  }
+})
+
+app.get('/:id/delete', (req, res) => {
+  const id = req.params.id
+
+  fs.readFile('./data/todos.json', (err, data) => {
+    if (err) throw err
+
+    const todos = JSON.parse(data)
+
+    const filteredTodos = todos.filter(todo => todo.id != id)
+
+    fs.writeFile('./data/todos.json', JSON.stringify(filteredTodos), (err) => {
+      if (err) throw err
+
+      res.render('home', { todos: filteredTodos, deleted: true })
+    })
+  })
+})
+
+
+app.get('/:id/update', (req, res) => {
+  const id = req.params.id
+
+  fs.readFile('./data/todos.json', (err, data) => {
+    if (err) throw err
+    
+    const todos = JSON.parse(data)
+    const todo = todos.filter(todo => todo.id == id)[0]
+    
+    const todoIdx = todos.indexOf(todo)
+    const splicedTodo = todos.splice(todoIdx, 1)[0]
+    
+    splicedTodo.done = true
+    
+    todos.push(splicedTodo)
+
+    fs.writeFile('./data/todos.json', JSON.stringify(todos), (err) => {
+      if (err) throw err
+
+      res.render('home', { todos: todos })
+    })
+  })
+    
+})
+
+
 app.listen(8000, err => {
 	if(err) throw err
 
 	console.log('App is running on port 8000...')
 })
+
+function id () {
+  return '_' + Math.random().toString(36).substr(2, 9);
+}
