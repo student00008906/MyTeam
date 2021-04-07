@@ -6,7 +6,7 @@ To run this web aplication locally you must follow the steps below:
 
 1. Clone this repository
 ```bash
-git clone [link]
+git clone https://github.com/student00008906/MyTeam.git
 ```
 
 2. Install dependencies
@@ -53,6 +53,6 @@ node app
 - method-override
 
 ### Web app repository on github
-[link to git repo]
+[link to git repo](https://github.com/student00008906/MyTeam.git)
 
 enjoy!
